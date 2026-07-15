@@ -1,0 +1,864 @@
+{
+  "name": "Personal Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "personal-assistant",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "5dd562bd-734d-4bd7-9a2a-7e85cfa2eade",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -48,
+        -96
+      ],
+      "webhookId": "022b65f7-ec14-41e6-b2a7-7ba32328454e"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.message }}",
+        "options": {}
+      },
+      "id": "8a0ad51e-c310-40fb-a58b-1eb3519c71a0",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        240,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.output }}",
+        "options": {}
+      },
+      "id": "a2d55fb5-fca0-4dd0-9cbd-31a61ccf7361",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        640,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "personal_assistant_memory",
+        "contextWindowLength": 10
+      },
+      "id": "73e57511-6c00-4e39-a108-52f19ef8b477",
+      "name": "Simple Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "noorulhuda4587@gmail.com",
+          "mode": "list",
+          "cachedResultName": "noorulhuda4587@gmail.com"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('start', 'Event start datetime ISO format', 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('end', 'Event end datetime ISO format', 'string') }}",
+        "additionalFields": {
+          "description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('description', 'Event description', 'string') }}",
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('summary', 'Event title', 'string') }}"
+        }
+      },
+      "id": "3f1b46ed-8de4-4076-abb1-44f494417ad9",
+      "name": "Create_Calendar_Event",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        96,
+        416
+      ],
+      "operation": "create",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "noorulhuda4587@gmail.com",
+          "mode": "list",
+          "cachedResultName": "noorulhuda4587@gmail.com"
+        },
+        "additionalFields": {}
+      },
+      "id": "3880efa0-9891-4642-a86f-d29f7184f6eb",
+      "name": "Get_Calendar_Events",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        256,
+        432
+      ],
+      "operation": "getAll",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "noorulhuda4587@gmail.com",
+          "mode": "list",
+          "cachedResultName": "noorulhuda4587@gmail.com"
+        },
+        "additionalFields": {}
+      },
+      "id": "6cf190bb-e2c0-4806-9bef-de6f8d170e1b",
+      "name": "Get_Single_Calendar_Event",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        416,
+        400
+      ],
+      "operation": "get",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 10,
+        "filters": {
+          "q": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('q', 'Search query to filter emails', 'string') }}"
+        }
+      },
+      "id": "8f59eb8c-eb35-4ac7-981c-18f59be16a33",
+      "name": "Get_Messages_Gmail",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        640,
+        400
+      ],
+      "webhookId": "3ed1d78f-cd9c-4433-a25a-c3d27cb2c846",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('messageId', 'The Gmail message ID', 'string') }}"
+      },
+      "id": "a48f526a-716b-486d-bfff-d4713e662f15",
+      "name": "Get_Single_Message_Gmail",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        800,
+        432
+      ],
+      "webhookId": "627d9460-b217-477f-a3e0-9aee591884f3",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('messageId', 'The ID of the email to reply to', 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('message', 'The reply email body text', 'string') }}",
+        "options": {}
+      },
+      "id": "38477623-e1a2-4caa-9151-deb6da0885f3",
+      "name": "Send_Message_Gmail",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        960,
+        400
+      ],
+      "webhookId": "9b0548a8-1022-47ca-b6e5-a3159c7d828c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1jR7VM6bbGm6TaSKLxbwfl_JwgT8uTFVaLk2IDX3pUNs",
+          "mode": "list",
+          "cachedResultName": "Personal Assistant",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jR7VM6bbGm6TaSKLxbwfl_JwgT8uTFVaLk2IDX3pUNs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Tasks",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jR7VM6bbGm6TaSKLxbwfl_JwgT8uTFVaLk2IDX3pUNs/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Task": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Task', 'The task title', 'string') }}",
+            "Status": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Status', 'Task status: Pending, In Progress, or Done', 'string') }}",
+            "Due Date": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('DueDate', 'Due date for the task', 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Task",
+              "displayName": "Task",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Due Date",
+              "displayName": "Due Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "7ea724ba-a6fc-4ab9-a957-b1c7da7225aa",
+      "name": "Add_Task",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        0,
+        656
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1jR7VM6bbGm6TaSKLxbwfl_JwgT8uTFVaLk2IDX3pUNs",
+          "mode": "list",
+          "cachedResultName": "Personal Assistant",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jR7VM6bbGm6TaSKLxbwfl_JwgT8uTFVaLk2IDX3pUNs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Tasks",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jR7VM6bbGm6TaSKLxbwfl_JwgT8uTFVaLk2IDX3pUNs/edit#gid=0"
+        },
+        "options": {}
+      },
+      "id": "361371c7-0ba8-4ecf-9430-00951bb816ad",
+      "name": "Get_Tasks",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        112,
+        752
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1jR7VM6bbGm6TaSKLxbwfl_JwgT8uTFVaLk2IDX3pUNs",
+          "mode": "list",
+          "cachedResultName": "Personal Assistant",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jR7VM6bbGm6TaSKLxbwfl_JwgT8uTFVaLk2IDX3pUNs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 606763473,
+          "mode": "list",
+          "cachedResultName": "Notes",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jR7VM6bbGm6TaSKLxbwfl_JwgT8uTFVaLk2IDX3pUNs/edit#gid=606763473"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Note": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Note', 'The note content to save', 'string') }}",
+            "Date": "={{ $now }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Note",
+              "displayName": "Note",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "cb96ef93-7cbb-41c8-bfb5-591ee9028430",
+      "name": "Add_Note",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        208,
+        656
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1jR7VM6bbGm6TaSKLxbwfl_JwgT8uTFVaLk2IDX3pUNs",
+          "mode": "list",
+          "cachedResultName": "Personal Assistant",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jR7VM6bbGm6TaSKLxbwfl_JwgT8uTFVaLk2IDX3pUNs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 606763473,
+          "mode": "list",
+          "cachedResultName": "Notes",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jR7VM6bbGm6TaSKLxbwfl_JwgT8uTFVaLk2IDX3pUNs/edit#gid=606763473"
+        },
+        "options": {}
+      },
+      "id": "7dc10680-e4f7-4c68-8145-bd33a64cc470",
+      "name": "Get_Notes",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        304,
+        752
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1jR7VM6bbGm6TaSKLxbwfl_JwgT8uTFVaLk2IDX3pUNs",
+          "mode": "list",
+          "cachedResultName": "Personal Assistant",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jR7VM6bbGm6TaSKLxbwfl_JwgT8uTFVaLk2IDX3pUNs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 899119104,
+          "mode": "list",
+          "cachedResultName": "Finance Tracking",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jR7VM6bbGm6TaSKLxbwfl_JwgT8uTFVaLk2IDX3pUNs/edit#gid=899119104"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Amount": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Amount', 'The expense amount as a number', 'number') }}",
+            "Category": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Category', 'Expense category e.g. Food, Transport, Bills', 'string') }}",
+            "Date": "={{ $now }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Amount",
+              "displayName": "Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "f4d774cc-5dc9-4277-88ef-677b0f042489",
+      "name": "Add_Expense",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        416,
+        656
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1jR7VM6bbGm6TaSKLxbwfl_JwgT8uTFVaLk2IDX3pUNs",
+          "mode": "list",
+          "cachedResultName": "Personal Assistant",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jR7VM6bbGm6TaSKLxbwfl_JwgT8uTFVaLk2IDX3pUNs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 899119104,
+          "mode": "list",
+          "cachedResultName": "Finance Tracking",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jR7VM6bbGm6TaSKLxbwfl_JwgT8uTFVaLk2IDX3pUNs/edit#gid=899119104"
+        },
+        "options": {}
+      },
+      "id": "234eb7f3-daeb-4e87-a181-c41573168944",
+      "name": "Get_Expenses",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        528,
+        736
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## GMAIL TOOLS\n",
+        "height": 240,
+        "width": 544,
+        "color": "#812C2C"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        560,
+        352
+      ],
+      "typeVersion": 1,
+      "id": "8bc482c9-2895-4427-8d00-61ffd315a934",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## CALENDER TOOLS\n",
+        "height": 240,
+        "width": 544,
+        "color": "#1F3393"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        16,
+        352
+      ],
+      "typeVersion": 1,
+      "id": "79658f73-33c9-4668-a872-65f276db7d6f",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## SHEETS TOOLS\n",
+        "height": 288,
+        "width": 704,
+        "color": "#2D6C38"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -48,
+        592
+      ],
+      "typeVersion": 1,
+      "id": "5830c5c8-dd2e-442a-9a56-abd5b5de62aa",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## SEARCH TOOL \n",
+        "height": 240,
+        "width": 272,
+        "color": "#817146"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -256,
+        352
+      ],
+      "typeVersion": 1,
+      "id": "ae1a72a0-2760-489d-985c-a6bbda17a372",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        96
+      ],
+      "id": "fbbc437c-b7ac-45de-bb51-73d52d755906",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://serpapi.com/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "=={{ $fromAI('query', 'Search query', 'string') }}"
+            },
+            {
+              "name": "api_key",
+              "value": "YOUR_SERPAPI_KEY"
+            },
+            {
+              "name": "engine",
+              "value": "google"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        -144,
+        432
+      ],
+      "id": "4ae4ea49-d9c2-4676-8b8d-355aca73dff5",
+      "name": "HTTP Request",
+      "notes": "Use this to search the web for current information, news, or any topic."
+    },
+    {
+      "parameters": {
+        "content": "## NOTES:\n\nThis workflow acts as an AI-powered personal assistant accessible\nvia webhook. It uses an AI Agent connected to multiple tools\nto handle tasks through natural language commands.\n\n**WEB SEARCH**\n1. AI detects a web search is needed\n2. Sends query to SerpAPI via HTTP GET request.\n3.  Live Google results returned to AI Agent\n4. AI forms a response based on search results\n\n**GOOGLE CALENDAR**\n1. Create Event → AI extracts title, date, time and creates event\n2. Get All Events → fetches upcoming events from calendar\n3. Get Single Event → retrieves details of one specific event\n\n**GMAIL**\n1. Get Messages → searches inbox and returns up to 10 emails\n2. Get Single Message → fetches full details of one email\n3. Send Message → composes and sends a reply via Gmail\n\n**GOOGLE SHEETS**\n1. Add Task → appends new task with status and due date\n2. Get Tasks → retrieves full task list from Tasks sheet\n3. Add Note → saves a new note to Notes sheet\n4. Get Notes → retrieves all saved notes\n5. Add Expense → logs amount and category to Finance sheet\n6. Get Expenses → retrieves full expense history",
+        "height": 624,
+        "width": 688,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1072,
+        -192
+      ],
+      "typeVersion": 1,
+      "id": "74b94d03-eb55-46db-8d18-32e611352617",
+      "name": "Sticky Note4"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create_Calendar_Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get_Calendar_Events": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get_Single_Calendar_Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get_Messages_Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get_Single_Message_Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send_Message_Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add_Task": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get_Tasks": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add_Note": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get_Notes": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add_Expense": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get_Expenses": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "54f47a5d-0fca-432d-8b5c-f5283c361f45",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "YOUR_N8N_INSTANCE_ID"
+  },
+  "nodeGroups": [],
+  "id": "oWQbrhDnySMfcOna",
+  "tags": []
+}

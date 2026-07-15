@@ -1,0 +1,479 @@
+{
+  "name": "KPI Analysis",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -416,
+        512
+      ],
+      "id": "5bf811d0-e556-4dfa-bf9d-d9a3d95bcf88",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1nzR1TT9dSHdknUWRK5NwVdzrbd2kF77tTeRuo93achY",
+          "mode": "list",
+          "cachedResultName": "Dim_Date",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1nzR1TT9dSHdknUWRK5NwVdzrbd2kF77tTeRuo93achY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1nzR1TT9dSHdknUWRK5NwVdzrbd2kF77tTeRuo93achY/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        144,
+        928
+      ],
+      "id": "0b4c371f-2260-471a-a811-6ee60fdbce1b",
+      "name": "Get row(s) in sheet4",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1r3fmx0mHdZaEoA4TkX5R_bhn32YyrVj5LRc7X2NABgk",
+          "mode": "list",
+          "cachedResultName": "Fact_Sales",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1r3fmx0mHdZaEoA4TkX5R_bhn32YyrVj5LRc7X2NABgk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1r3fmx0mHdZaEoA4TkX5R_bhn32YyrVj5LRc7X2NABgk/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        144,
+        96
+      ],
+      "id": "340d71b2-15d1-4525-9450-efa8641367c8",
+      "name": "Fact_Sales",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1cU9xNCuOBtYOL_cbwxDK6uv6VBrL8ClvNgrQN0ln12M",
+          "mode": "list",
+          "cachedResultName": "Dim_Product",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cU9xNCuOBtYOL_cbwxDK6uv6VBrL8ClvNgrQN0ln12M/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cU9xNCuOBtYOL_cbwxDK6uv6VBrL8ClvNgrQN0ln12M/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        144,
+        288
+      ],
+      "id": "89bee00f-87da-4a59-b696-60cc4ffca6aa",
+      "name": "Dim_Product",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1sBuIbskPZ7BHBmyZxtqVnF0fIvmEoZE2AN-JyNLxHoM",
+          "mode": "list",
+          "cachedResultName": "Dim_Customer",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sBuIbskPZ7BHBmyZxtqVnF0fIvmEoZE2AN-JyNLxHoM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sBuIbskPZ7BHBmyZxtqVnF0fIvmEoZE2AN-JyNLxHoM/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        144,
+        512
+      ],
+      "id": "2402e1d7-c5a8-4eb6-aa6b-1d48807f88a8",
+      "name": "Dim_Customer",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "17Qn-4t_ZwJqroCNATZml4lR0krJa2n5DuG1XAs6bUpM",
+          "mode": "list",
+          "cachedResultName": "Dim_Region",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Qn-4t_ZwJqroCNATZml4lR0krJa2n5DuG1XAs6bUpM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Qn-4t_ZwJqroCNATZml4lR0krJa2n5DuG1XAs6bUpM/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        144,
+        704
+      ],
+      "id": "c0f1b89b-94df-4a03-aeb6-8f5f631278b5",
+      "name": "Dim_Region",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 5
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        704,
+        464
+      ],
+      "id": "b9ba4a5e-ea35-46f9-b20d-a664160a7297",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all items from merged sheets\nconst items = $input.all();\nconst sales = items.map(i => i.json);\n\n// Filter only Fact_Sales rows (they have OrderID)\nconst factSales = sales.filter(r => r.OrderID);\n\n// ── BASIC METRICS ──────────────────────────────────────────\nconst totalRevenue = factSales.reduce((s, r) => s + (parseFloat(r.Revenue) || 0), 0);\nconst totalProfit  = factSales.reduce((s, r) => s + (parseFloat(r.Profit) || 0), 0);\nconst totalOrders  = factSales.length;\nconst totalQty     = factSales.reduce((s, r) => s + (parseInt(r.Quantity) || 0), 0);\nconst profitMargin = totalRevenue ? ((totalProfit / totalRevenue) * 100).toFixed(2) : 0;\nconst avgOrderVal  = totalOrders  ? (totalRevenue / totalOrders).toFixed(2) : 0;\n\n// ── REVENUE BY PRODUCT ─────────────────────────────────────\nconst byProduct = {};\nfactSales.forEach(r => {\n  const key = r.Product || 'Unknown';\n  byProduct[key] = (byProduct[key] || 0) + (parseFloat(r.Revenue) || 0);\n});\nconst byProductSorted = Object.entries(byProduct).sort((a, b) => b[1] - a[1]);\nconst topProduct    = byProductSorted[0]?.[0] || 'N/A';\nconst topProductRev = byProductSorted[0]?.[1] || 0;\n\n// ── REVENUE BY CUSTOMER ────────────────────────────────────\nconst byCustomer = {};\nfactSales.forEach(r => {\n  const key = r.Customer || 'Unknown';\n  byCustomer[key] = (byCustomer[key] || 0) + (parseFloat(r.Revenue) || 0);\n});\nconst byCustomerSorted = Object.entries(byCustomer).sort((a, b) => b[1] - a[1]);\nconst topCustomer    = byCustomerSorted[0]?.[0] || 'N/A';\nconst topCustomerRev = byCustomerSorted[0]?.[1] || 0;\n\n// ── REVENUE BY REGION ──────────────────────────────────────\nconst byRegion = {};\nfactSales.forEach(r => {\n  const key = r.Region || 'Unknown';\n  byRegion[key] = (byRegion[key] || 0) + (parseFloat(r.Revenue) || 0);\n});\nconst byRegionSorted = Object.entries(byRegion).sort((a, b) => b[1] - a[1]);\nconst topRegion    = byRegionSorted[0]?.[0] || 'N/A';\nconst topRegionRev = byRegionSorted[0]?.[1] || 0;\n\n// ── REVENUE BY MONTH ───────────────────────────────────────\nconst byMonth = {};\nfactSales.forEach(r => {\n  const dateStr = r.Date || '';\n  let label = 'Unknown';\n  try {\n    const d = new Date(dateStr);\n    label = d.toLocaleString('default', { month: 'long', year: 'numeric' });\n  } catch(e) {}\n  byMonth[label] = (byMonth[label] || 0) + (parseFloat(r.Revenue) || 0);\n});\n\n// ── REVENUE BY QUARTER ─────────────────────────────────────\nconst byQuarter = {};\nfactSales.forEach(r => {\n  const dateStr = r.Date || '';\n  let label = 'Unknown';\n  try {\n    const d = new Date(dateStr);\n    const q = Math.floor(d.getMonth() / 3) + 1;\n    label = `Q${q} ${d.getFullYear()}`;\n  } catch(e) {}\n  byQuarter[label] = (byQuarter[label] || 0) + (parseFloat(r.Revenue) || 0);\n});\n\n// ── BEST & WORST MONTH ─────────────────────────────────────\nconst monthEntries = Object.entries(byMonth);\nconst bestMonth  = monthEntries.length ? monthEntries.reduce((a, b) => a[1] > b[1] ? a : b)[0] : 'N/A';\nconst worstMonth = monthEntries.length ? monthEntries.reduce((a, b) => a[1] < b[1] ? a : b)[0] : 'N/A';\n\n// ── MOM GROWTH (last 2 months) ─────────────────────────────\nconst monthList = monthEntries;\nlet momGrowth = 0;\nif (monthList.length >= 2) {\n  const prevRev = monthList[monthList.length - 2][1];\n  const currRev = monthList[monthList.length - 1][1];\n  momGrowth = prevRev ? (((currRev - prevRev) / prevRev) * 100).toFixed(2) : 0;\n}\n\n// ── TOP 3 PRODUCTS TABLE ───────────────────────────────────\nconst topProductsTable = byProductSorted.slice(0, 3).map(([product, revenue]) => ({\n  product,\n  revenue: revenue.toFixed(2)\n}));\n\n// ── REGION TABLE ───────────────────────────────────────────\nconst regionTable = byRegionSorted.map(([region, revenue]) => ({\n  region,\n  revenue: revenue.toFixed(2)\n}));\n\n// ── RETURN ─────────────────────────────────────────────────\nreturn [{\n  json: {\n    total_revenue:      parseFloat(totalRevenue.toFixed(2)),\n    total_profit:       parseFloat(totalProfit.toFixed(2)),\n    total_orders:       totalOrders,\n    total_quantity:     totalQty,\n    profit_margin:      parseFloat(profitMargin),\n    avg_order_value:    parseFloat(avgOrderVal),\n    top_product:        topProduct,\n    top_product_rev:    parseFloat(topProductRev.toFixed(2)),\n    top_customer:       topCustomer,\n    top_customer_rev:   parseFloat(topCustomerRev.toFixed(2)),\n    top_region:         topRegion,\n    top_region_rev:     parseFloat(topRegionRev.toFixed(2)),\n    best_month:         bestMonth,\n    worst_month:        worstMonth,\n    mom_growth:         parseFloat(momGrowth),\n    monthly_trend:      JSON.stringify(byMonth),\n    top_products_table: JSON.stringify(topProductsTable),\n    region_table:       JSON.stringify(regionTable),\n    by_quarter:         JSON.stringify(byQuarter),\n    report_generated:   new Date().toISOString()\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        992,
+        512
+      ],
+      "id": "dc934455-6588-4a2e-9685-3a9292e20fc2",
+      "name": "DAX Calculation"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1216,
+        512
+      ],
+      "id": "81b54269-da72-47c3-8543-ea1e073a909a",
+      "name": "Wait",
+      "webhookId": "a62bc23f-23c9-4ebf-aaea-24fe258e371a"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Generate a complete Weekly KPI Report HTML email using this data:\n\nREVENUE & PROFIT:\n- Total Revenue: ₨ {{ $json.total_revenue }}\n- Total Profit: ₨ {{ $json.total_profit }}\n- Profit Margin: {{ $json.profit_margin }}%\n- Avg Order Value: ₨ {{ $json.avg_order_value }}\n- Total Orders: {{ $json.total_orders }}\n- Total Quantity Sold: {{ $json.total_quantity }}\n\nGROWTH:\n- MoM Growth: {{ $json.mom_growth }}%\n- Best Month: {{ $json.best_month }}\n- Worst Month: {{ $json.worst_month }}\n\nTOP PERFORMERS:\n- Top Product: {{ $json.top_product }} (₨ {{ $json.top_product_rev }})\n- Top Customer: {{ $json.top_customer }} (₨ {{ $json.top_customer_rev }})\n- Top Region: {{ $json.top_region }} (₨ {{ $json.top_region_rev }})\n\nPRODUCT BREAKDOWN: {{ $json.top_products_table }}\nREGION BREAKDOWN: {{ $json.region_table }}\nQUARTERLY BREAKDOWN: {{ $json.by_quarter }}\nMONTHLY TREND: {{ $json.monthly_trend }}\n\nReport Date: {{ $json.report_generated }}\n\nGenerate the full HTML report now.",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are a senior data analyst and report writer. Your job is to generate professional, visually rich HTML email reports from KPI data.\n\nRules:\n- Output ONLY valid HTML. No markdown, no code fences, no explanations.\n- Use inline CSS only (no external stylesheets).\n- Use a clean professional design: dark header (#1a1a2e), white body, colored metric cards.\n- All currency values are in Pakistani Rupees (₨).\n- Always include: Executive Summary, KPI Cards, Monthly Trend, Top Products, Top Regions, AI Recommendations.\n- Write in a confident, professional analyst tone.\n- Never leave placeholder text like [INSERT DATA HERE]."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1472,
+        512
+      ],
+      "id": "169073ec-c281-4d58-99ff-86c268c222ae",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extracts clean HTML from Groq/OpenAI response\nconst items = $input.all();\nconst raw = items[0].json;\n\n// n8n surfaces Groq response in different places depending on node type\nlet htmlReport =\n  raw?.message?.content ||\n  raw?.text ||\n  raw?.content ||\n  JSON.stringify(raw);\n\n// Strip markdown code fences if model wrapped output in ```html ... ```\nif (typeof htmlReport === 'string' && htmlReport.includes('```')) {\n  htmlReport = htmlReport\n    .split('\\n')\n    .filter(line => !line.trim().startsWith('```'))\n    .join('\\n')\n    .trim();\n}\n\nreturn [{ json: { html_report: htmlReport } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1808,
+        512
+      ],
+      "id": "17cd6ce6-e3d0-48b8-80e6-e3c9fd5ed805",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "sendTo": "noorulhuda4587@gmail.com",
+        "subject": "=Weekly KPI Report - {{ $now.format('MMMM DD, YYYY') }}",
+        "message": "={{ $json.html_report }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2016,
+        512
+      ],
+      "id": "4734e803-9bf2-4756-a84b-8672da261d7c",
+      "name": "Send a message",
+      "webhookId": "557fb8d8-4bb6-44a1-a0cb-53fbb5dcfca5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1472,
+        720
+      ],
+      "id": "e3618621-e365-41ac-ab9d-d71ce8771d8c",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "OpenRouter account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fact_Sales",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Dim_Product",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Dim_Customer",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Dim_Region",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get row(s) in sheet4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet4": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "Fact_Sales": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dim_Product": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Dim_Customer": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Dim_Region": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "DAX Calculation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DAX Calculation": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "ceaf482b-8100-4979-8728-9e314e898322",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "YOUR_N8N_INSTANCE_ID"
+  },
+  "nodeGroups": [],
+  "id": "u0M6OCv3wVSC1JBt",
+  "tags": []
+}

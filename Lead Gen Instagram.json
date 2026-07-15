@@ -1,0 +1,243 @@
+{
+  "name": "Lead Gen Instagram",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Instagram Lead Scrapper",
+        "formDescription": "Get all the leads from Instagram directly to Airtable",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "What are you looking for?"
+            },
+            {
+              "fieldLabel": "Location"
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "052182ed-30ed-489d-8c47-bb25e74be380",
+      "name": "On form submission",
+      "webhookId": "f9a86aa9-1985-42df-b624-a1a75e463e17"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/actors/apify~google-search-scraper/run-sync-get-dataset-items?token=YOUR_APIFY_API_KEY",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"chatGptSearch\": {\n        \"enableChatGpt\": false\n    },\n    \"copilotSearch\": {\n        \"enableCopilot\": false\n    },\n    \"disableGoogleSearchResults\": false,\n    \"focusOnPaidAds\": false,\n    \"forceExactMatch\": false,\n    \"geminiSearch\": {\n        \"enableGemini\": false\n    },\n    \"includeIcons\": false,\n    \"includeUnfilteredResults\": false,\n    \"maxPagesPerQuery\": 10,\n    \"maximumLeadsEnrichmentRecords\": 100,\n    \"mobileResults\": false,\n    \"perplexitySearch\": {\n        \"enablePerplexity\": false,\n        \"returnImages\": false,\n        \"returnRelatedQuestions\": false\n    },\n    \"queries\": \"site:instagram.com + Dentist Lahore\",\n    \"saveHtml\": false,\n    \"saveHtmlToKeyValueStore\": true,\n    \"verifyLeadsEnrichmentEmails\": true\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        224,
+        0
+      ],
+      "id": "e21b7188-6158-4647-a59f-422534a27041",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        432,
+        0
+      ],
+      "id": "5ae71ab4-f6ea-4294-9a66-0b34c16fed17",
+      "name": "Wait",
+      "webhookId": "d9c32de0-cba3-47ec-aa27-2ca45c75046c"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst seen = new Set();\nconst leads = [];\n\nfunction parseFollowers(str) {\n  if (!str) return null;\n  const match = str.match(/([\\d.]+)([KkMm]?)\\+?/);\n  if (!match) return null;\n  let num = parseFloat(match[1]);\n  const suffix = match[2].toUpperCase();\n  if (suffix === 'K') num *= 1000;\n  if (suffix === 'M') num *= 1000000;\n  return Math.round(num);\n}\n\nfunction getType(url) {\n  if (url.includes('/reel/')) return 'Reel';\n  if (url.includes('/p/')) return 'Post';\n  return 'Account';\n}\n\nfor (const item of items) {\n  const organicResults = item.json.organicResults || [];\n\n  for (const result of organicResults) {\n    if (!result.url || !result.url.includes('instagram.com')) continue;\n\n    if (seen.has(result.url)) continue;\n    seen.add(result.url);\n\n    leads.push({\n      type: getType(result.url),\n      name: result.title || '',\n      instagram_url: result.url,\n      username: result.channelName || '',\n      followers: parseFollowers(result.followersAmount),\n      description: result.description || '',\n      page: item.json.searchQuery?.page || '',\n      position: result.position || '',\n    });\n  }\n}\n\nreturn leads.map(lead => ({ json: lead }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        -16
+      ],
+      "id": "8338be94-68a0-40e1-bc33-24d4fe3076c0",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1X-C8sA1-Bi11p6Ve1J11-wpIRAbLHo5BVhjVmBygzh8",
+          "mode": "list",
+          "cachedResultName": "Instagram Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1X-C8sA1-Bi11p6Ve1J11-wpIRAbLHo5BVhjVmBygzh8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1X-C8sA1-Bi11p6Ve1J11-wpIRAbLHo5BVhjVmBygzh8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.name }}",
+            "Username": "={{ $json.username }}",
+            "Description": "={{ $json.description }}",
+            "Followers": "={{ $json.followers }}",
+            "Type": "={{ $json.type }}",
+            "Handle": "={{ $json.instagram_url }}"
+          },
+          "matchingColumns": [
+            "Handle"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Username",
+              "displayName": "Username",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Followers",
+              "displayName": "Followers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Handle",
+              "displayName": "Handle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        848,
+        -16
+      ],
+      "id": "c247a169-d50d-4d6b-afd8-f196a3ba5a24",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "69b82780-5345-4dfd-9102-99f61d9ae46b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "YOUR_N8N_INSTANCE_ID"
+  },
+  "nodeGroups": [],
+  "id": "Gb2EpJGwb2OIxVPe",
+  "tags": []
+}

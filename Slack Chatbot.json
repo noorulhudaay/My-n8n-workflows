@@ -1,0 +1,262 @@
+{
+  "name": "Slack Chatbot",
+  "nodes": [
+    {
+      "parameters": {
+        "trigger": [
+          "any_event",
+          "app_mention"
+        ],
+        "channelId": {
+          "__rl": true,
+          "value": "C0BBZAYTMQS",
+          "mode": "list",
+          "cachedResultName": "ori-channel"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.slackTrigger",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "df447006-dc99-47f7-9eb8-325c52efa1f8",
+      "name": "Slack Trigger",
+      "webhookId": "539b7328-3617-4479-8c3f-c4a822486d3d",
+      "credentials": {
+        "slackApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0BBZAYTMQS",
+          "mode": "list",
+          "cachedResultName": "ori-channel"
+        },
+        "text": "={{ $json.output }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        848,
+        0
+      ],
+      "id": "297b7247-a587-4cb0-9c97-3efca40ad636",
+      "name": "Send a message",
+      "webhookId": "3e123873-dfaa-4f75-8afb-bad89ec97589",
+      "credentials": {
+        "slackApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=A Slack user has asked the following question about recipes:\n{{ $json.blocks[0].elements[0].elements[1].text }}\nUse the KB tool to search for relevant recipe information, then answer the user's question based only on what you find.",
+        "options": {
+          "systemMessage": "=You are a helpful Recipe Assistant integrated into Slack. Your job is to answer questions about recipes strictly based on the information retrieved from the recipe knowledge base (PDF documents).\n\n# TOOLS:\n-) KB - use this tool to fetch information about the user query.\n\n# RULES:\n- ONLY answer using the context retrieved from the knowledge base tool\n- If the answer is not found in the retrieved context, say: \"I couldn't find that in the recipe book. Try asking something else!\"\n- Keep answers concise and friendly for Slack (use emojis where appropriate 🍳)\n- Format ingredients as bullet points\n- Format steps as numbered lists\n- NEVER make up recipes or ingredients not found in the documents\n- If the user greets you, respond warmly and tell them they can ask about any recipe"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        464,
+        0
+      ],
+      "id": "6d117be0-9019-4be0-b741-c3f7fd942dc6",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        416,
+        192
+      ],
+      "id": "8f35e36d-960b-4a42-8c84-4c5aa29fdbfe",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.blocks[0].elements[0].elements[0].user_id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        560,
+        192
+      ],
+      "id": "a0bad56a-0f78-4ad9-ac58-22f234d1f69d",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "modelName": "intfloat/multilingual-e5-large",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
+      "typeVersion": 1,
+      "position": [
+        736,
+        368
+      ],
+      "id": "7e9dd0e3-e61d-4c51-90ff-8370f9b49de2",
+      "name": "Embeddings HuggingFace Inference1",
+      "credentials": {
+        "huggingFaceApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Hugging Face account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Search the recipe knowledge base to find information about recipes, ingredients, cooking steps, preparation time, serving sizes, and any other recipe-related details from the PDF documents. Use this tool whenever the user asks anything about a recipe.",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "recipes",
+          "mode": "list",
+          "cachedResultName": "recipes"
+        },
+        "topK": 5,
+        "options": {
+          "pineconeNamespace": "recipies"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        736,
+        224
+      ],
+      "id": "119bf04d-7b0e-4c51-ba9a-c75004bd7421",
+      "name": "KB",
+      "credentials": {
+        "pineconeApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Pinecone account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## NOTES:\nThis workflow listens for questions in a Slack channel and\nreplies with AI-generated answers from the recipes database.\n\n**Steps:**\n1.Slack Trigger listens for new messages in the channel\n2. Captures the user's question from the Slack message\n3. Sends the question directly to Pinecone vector database\n4. Pinecone searches and retrieves relevant recipes context\n5. AI generates a response based on retrieved context\n6. Final answer is sent back to the Slack channel",
+        "height": 256,
+        "width": 560,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -416,
+        -192
+      ],
+      "typeVersion": 1,
+      "id": "8506c34c-ec39-4d86-b7d1-338cc93c0380",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Slack Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings HuggingFace Inference1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "KB",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "KB": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "a5042dea-8f48-4563-b24b-ae12e7d17b7c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "YOUR_N8N_INSTANCE_ID"
+  },
+  "nodeGroups": [],
+  "id": "74YC7PbXwWlpRFxX",
+  "tags": []
+}

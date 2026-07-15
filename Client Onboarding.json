@@ -1,0 +1,518 @@
+{
+  "name": "Client Onboarding",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Welcome to OriServices",
+        "formDescription": "Kindly fill in the given information to get started with OriServices",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Full Name",
+              "placeholder": "Ori",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Company Name",
+              "placeholder": "OriServices",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Required Services",
+              "placeholder": "web dev, mobile dev",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Industry",
+              "placeholder": "e.g Marketing, Designing, FInance",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Starting Date?",
+              "fieldType": "date",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "placeholder": "name@gmail.com",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -640,
+        208
+      ],
+      "id": "8cc0cc6b-2861-4435-b4cc-d3112ba7ed17",
+      "name": "On form submission",
+      "webhookId": "0f1b2002-ae27-4806-97f6-956b3b9afccf"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7fa496a1-a84a-4998-9124-c89560ee5d50",
+              "name": "Full Name",
+              "value": "={{ $json['Full Name'] }}",
+              "type": "string"
+            },
+            {
+              "id": "f1f46758-f743-4c55-b186-4b6dff7bc710",
+              "name": "Email",
+              "value": "={{ $json.Email }}",
+              "type": "string"
+            },
+            {
+              "id": "d7ce8d77-f894-4039-9fca-82b83df64396",
+              "name": "Company Name",
+              "value": "={{ $json['Company Name'] }}",
+              "type": "string"
+            },
+            {
+              "id": "ad14081c-5183-46bb-9939-86559397eec4",
+              "name": "Required Services",
+              "value": "={{ $json['Required Services'] }}",
+              "type": "string"
+            },
+            {
+              "id": "ed8bce3d-3c42-4c65-bc5c-973436e8a2fc",
+              "name": "Starting Date?",
+              "value": "={{ $json['Starting Date?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "e2f419e1-bd87-4485-b9a8-728288a48a16",
+              "name": "Industry",
+              "value": "={{ $json.Industry }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -432,
+        208
+      ],
+      "id": "2391da95-ed5d-4599-b736-5f53c9a8a4c6",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a professional business communication assistant for OriServices, a company specializing in AI Solutions, Data Science, Machine Learning, Automation, Software Development, Web Development, and Custom Digital Products.\n\nUsing the following client information:\n\n- Client Name: {{ $json[\"Full Name\"] }}\n- Email: {{ $json[\"Email\"] }}\n- Company/Business Name: {{ $json[\"Company Name\"] }}\n- Required Service: {{ $json[\"Required Services\"] }}\n- Project Start Date: {{ $json[\"Starting Date?\"] }}\n- Industry: {{ $json[\"Industry\"] }}\n\nWrite a professional, warm, and personalized welcome email for the client.\n\n# Output Format (IMPORTANT):\n\nReturn the response in the following structure:\n\nSubject: <create a professional, relevant subject line>\n\nEmail:\n<write the full email body here>\n\n# Requirements:\n\n1. Address the client by name.\n2. Thank them for choosing OriServices.\n3. Mention the requested service naturally.\n4. Briefly introduce OriServices as an expert company in AI, Data Science, Automation, Software Development, Web Development, and Digital Solutions.\n5. Express excitement about helping their business grow.\n6. Mention the planned start date if provided.\n7. Inform the client that they will receive a separate email containing the Terms of Agreement.\n8. Politely ask them to review and either sign the agreement or reply with confirmation before project initiation.\n9. End with a professional sign-off from OriServices or the Founder (Ori).\n10. Keep the tone friendly, modern, and professional.\n11. Ensure the email is well-structured and formatted properly for professional communication.\n12. Return only the final Subject + Email output without explanations or placeholders.\n13. Generate a unique subject line and email for each client based on the provided variables.\n14. Mention the Company Owner Information at last as well.",
+        "options": {
+          "systemMessage": "=You are the official Client Relations Assistant for OriServices.\n\n# About OriServices:\n\n- A technology company specializing in Artificial Intelligence, Data Science, Machine Learning, Business Automation, Software Development, Web Development, Data Analytics, and Custom Digital Solutions.\n- The company helps businesses improve efficiency, automate processes, gain insights from data, and build scalable software products.\n- The company's communication style is professional, friendly, modern, and client-focused.\n\n# Company Information:\n\n- Company Name: OriServices\n- Founder & Owner: Ori\n- Business Email: noorulhuda4587@gmail.com\n- Business Phone: +920000000000\n\n# Your responsibilities:\n\n1. Write personalized client communications based on the information provided.\n2. Make every message feel human and tailored to the client.\n3. Maintain a professional and welcoming tone.\n4. Build trust and confidence in OriServices' expertise.\n5. Clearly communicate enthusiasm for working with the client.\n6. Ensure all messages are grammatically correct and polished.\n7. Keep messages concise unless specifically asked to write detailed emails.\n\n# Writing Guidelines:\n\n- Always address the client by name when available.\n- Thank the client for their interest in or selection of OriServices.\n- Reference the service requested by the client naturally.\n- Briefly highlight relevant expertise of OriServices.\n- Focus on how the client’s business can benefit from the service.\n- Avoid exaggerated marketing claims.\n- Never fabricate project details, timelines, pricing, or guarantees.\n- If appropriate, inform the client that they will receive a separate email containing the Terms of Agreement and politely ask them to review and sign it or reply with confirmation before project initiation.\n- Use positive and professional language.\n- End with a professional sign-off from OriServices or the Founder when suitable.\n\n# Tone:\n\n- Professional\n- Friendly\n- Confident\n- Client-centric\n- Consultative rather than salesy\n\n# Output Rules:\n\n- Return only the final message.\n- Do not explain your reasoning.\n- Do not include placeholders that were not provided.\n- Adapt the message length to the communication channel (email).\n- If information is missing, gracefully omit it rather than mentioning missing data."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "096dccf7-6a1e-4e07-8c34-87d306fb24a4",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        0,
+        144
+      ],
+      "id": "846e9ca4-71d2-45e8-a70e-83446a52e6bd",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"subject\": {\n\t\t\t\"type\": \"string\",\n          \"description\": \"the actual subject of the email\"\n\t\t},\n\t\t\"body\": {\n\t\t\t\"type\": \"string\",\n\t\t\t\"description\": \"the content of the email, full email without subject\"\n\t\t}\n\t},\n  \"required\":[\"subject\",\"body\"]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        496,
+        144
+      ],
+      "id": "1c09655b-e34a-44a4-8dd8-337e8d468fe5",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        352,
+        144
+      ],
+      "id": "da7dd1dd-dbe9-43c1-8a81-12d185c166f8",
+      "name": "Groq Chat Model1",
+      "credentials": {
+        "groqApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Parse the JSON 'output' and output the following parameters correctly: \nSubject\nBody"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        352,
+        0
+      ],
+      "id": "e8349e3e-68be-4afe-8ece-012f48f6e50c",
+      "name": "Welcome Email"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Edit Fields').item.json.Email }}",
+        "subject": "={{ $json.output.subject }}",
+        "emailType": "text",
+        "message": "={{ $json.output.body }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        704,
+        0
+      ],
+      "id": "5418c98b-e082-47b9-8a8e-82675dcc55ad",
+      "name": "Send a message",
+      "webhookId": "0f64826c-9e02-4c09-9ba4-df1c59213594",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Generate a Terms of Agreement email using the client details below.\n\n\nOUTPUT FORMAT (IMPORTANT):\nReturn ONLY in this exact structure — no extra text, no dashes, no markdown:\n\nSubject: <professional subject line here>\n\nEmail: <full email body starts here, directly after \"Email: \" on the same line or next line>\n\nCLIENT DETAILS:\n- Full Name: {{ $json[\"Full Name\"] }}\n- Email: {{ $json[\"Email\"] }}\n- Company / Business Name: {{ $json[\"Company Name\"] }}\n- Required Service: {{ $json[\"Required Services\"] }}\n- Project Start Date: {{ $json[\"Starting Date?\"] }}\n- Industry: {{ $json[\"Industry\"] }}\n\n\nINSTRUCTIONS:\n1. Write the subject line first, then the full email body in the exact document format specified.\n2. Fill in the SERVICE PROVIDER INFORMATION and CLIENT INFORMATION blocks using the details above — do not leave these as placeholders.\n3. In Section 1 (Project Scope), describe specific deliverables and approach relevant to the client's requested service and industry — do not write generic descriptions.\n4. In Section 3 (Timeline), reference the exact project start date provided and note that the schedule may be refined during the kickoff discussion.\n5. In Section 4 (Payment Terms), state that a detailed payment schedule will be shared separately prior to project initiation and must be mutually agreed upon before work begins.\n6. In the Acceptance section, keep all signature and date fields as blank underscore lines for physical or digital signing. Pre-fill only the service provider name and title.\n7. In the closing paragraph, ask the client to reply with \"I Agree\" if accepting digitally, or to print, sign, and return the document for formal acceptance.\n8. Use today's date and \"Lahore, Pakistan\" as the document date and city.\n9. Output ONLY the final Subject + Email. No preamble, no notes.\n10. You MUST include the literal text \"Email:\" on its own line before the email body begins. This is required for parsing.",
+        "options": {
+          "systemMessage": "=You are a formal business documentation assistant for OriServices — a company specializing in AI Solutions, Data Science, Machine Learning, Automation, Software Development, Web Development, and Custom Digital Products.\n\nFounder & Owner: Ori\nEmail: noorulhuda4587@gmail.com\nPhone: +920000000000\nLocation: Lahore, Pakistan\n\nYour sole job is to produce a ready-to-send Terms of Agreement email. The output must follow this EXACT structure with no deviations:\n\nSubject: [subject line here]\n\n---\n\n[City, Date]\n\n[Client Name]\n[Company Name]\n[Client Email]\n\nDear [Client Name],\n\n[Opening paragraph — warm but professional, state this email contains the official Terms of Agreement between OriServices and the client]\n\n─────────────────────────────────────\n        TERMS OF AGREEMENT\n        OriServices × [Company Name]\n─────────────────────────────────────\n\nSERVICE PROVIDER INFORMATION\nCompany Name   : OriServices\nOwner          : Ori\nEmail          : noorulhuda4587@gmail.com\nPhone          : +920000000000\nLocation       : Lahore, Pakistan\n\nCLIENT INFORMATION\nClient Name    : [Client Name]\nCompany        : [Company Name]\nEmail          : [Client Email]\nIndustry       : [Industry]\n\n─────────────────────────────────────\n\n1. PROJECT SCOPE\n[content]\n\n2. CLIENT RESPONSIBILITIES\n[content]\n\n3. TIMELINE\n[content]\n\n4. PAYMENT TERMS\n[content]\n\n5. CONFIDENTIALITY\n[content]\n\n6. REVISIONS & CHANGE REQUESTS\n[content]\n\n7. TERMINATION\n[content]\n\n─────────────────────────────────────\n\nACCEPTANCE & CONFIRMATION\n\nBy signing below, both parties agree to the terms outlined in this document.\n\nSERVICE PROVIDER:\n\nName      : Ori\nTitle     : Founder & Owner, OriServices\nSignature : _______________________________\nDate      : _______________________________\n\n\nCLIENT:\n\nName      : _______________________________\nTitle     : _______________________________\nSignature : _______________________________\nDate      : _______________________________\n\n─────────────────────────────────────\n\n[Closing paragraph — ask client to reply with \"I Agree\" OR return a signed copy to confirm acceptance. Provide contact details for questions.]\n\nWarm regards,\n\nOri\nFounder & Owner — OriServices\nEmail: noorulhuda4587@gmail.com\nPhone: +920000000000\n\n---\n\nSTRICT RULES:\n- Output ONLY the subject line + email body. Nothing else.\n- No markdown, no asterisks, no bullet symbols — use plain text with numbered sections and dashes as shown.\n- Do not add explanations, notes, commentary, or filler text.\n- Do not leave any placeholders unfilled except the signature/date blank lines which must remain as underscores.\n- The document must look like a real, polished business agreement — not a template.\n- Tone: professional, warm, trustworthy, and client-friendly."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -16,
+        336
+      ],
+      "id": "101c8daa-6c69-4f23-8bd3-ca28a0d79cc1",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        512
+      ],
+      "id": "b9960e68-5f19-4091-a728-571a6f15e054",
+      "name": "Groq Chat Model2",
+      "credentials": {
+        "groqApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"subject\": {\n\t\t\t\"type\": \"string\",\n          \"description\": \"the actual subject of the email\"\n\t\t},\n\t\t\"body\": {\n\t\t\t\"type\": \"string\",\n\t\t\t\"description\": \"the content of the email, full email without subject\"\n\t\t}\n\t},\n  \"required\":[\"subject\",\"body\"]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        480,
+        512
+      ],
+      "id": "35c1ca8d-0ddb-406e-9d8e-df3dc88bca45",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        336,
+        512
+      ],
+      "id": "9d5213e3-2670-4d04-ad74-3524319ca96b",
+      "name": "Groq Chat Model3",
+      "credentials": {
+        "groqApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Parse the JSON 'output' and output the following parameters correctly: \n\n {{ $json.output }}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        336,
+        336
+      ],
+      "id": "9a89c3b8-f263-4508-9581-0f966975def0",
+      "name": "Terms of Agreement Email"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Edit Fields').item.json.Email }}",
+        "subject": "={{ $json.output.subject }}",
+        "emailType": "text",
+        "message": "={{ $json.output.body }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        704,
+        336
+      ],
+      "id": "3d83281f-4505-484a-9668-7465d69af522",
+      "name": "Send a message1",
+      "webhookId": "0f64826c-9e02-4c09-9ba4-df1c59213594",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## NOTES: \nThis workflow automates the complete client onboarding process for OriServices. \n\n**Steps:**\n1. Client fills out the onboarding form\n2. Form data is cleaned and mapped via Edit Fields\n3. Two AI Agents run simultaneously, one generates the Welcome Email while other generates the Terms of Agreement Email\n4. Each email is parsed into subject + body format\n5. Both emails are sent to the client via Gmail",
+        "height": 272,
+        "width": 416,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -800,
+        -144
+      ],
+      "typeVersion": 1,
+      "id": "1d806bc3-8e29-40ef-9a9d-d19a7e0b79b8",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Welcome Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Welcome Email",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Welcome Email",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Welcome Email": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Terms of Agreement Email",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Terms of Agreement Email",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Terms of Agreement Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Terms of Agreement Email": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "336d1bfd-135f-43a0-a695-822c5635f3c0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "YOUR_N8N_INSTANCE_ID"
+  },
+  "nodeGroups": [],
+  "id": "tSPGH1sswbAhMr0Q",
+  "tags": []
+}

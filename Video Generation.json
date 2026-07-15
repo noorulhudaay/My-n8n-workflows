@@ -1,0 +1,496 @@
+{
+  "name": "Video Generation",
+  "nodes": [
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -1440,
+        128
+      ],
+      "id": "d7d59d53-567b-4398-9e64-8cd6389eb960",
+      "name": "Wait",
+      "webhookId": "055ffea5-d3a2-4cb5-9d08-812f2d299a9f"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.magichour.ai/v1/text-to-video",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "YOUR_MAGICHOUR_API_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ name: \"output\", end_seconds: 5, aspect_ratio: \"16:9\", audio: true, style: { prompt: $json.text } }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -1632,
+        128
+      ],
+      "id": "8e217c8a-680d-472e-b886-bd4547766a17",
+      "name": "POST Node"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.magichour.ai/v1/video-projects/{{ $('POST Node').item.json.id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "YOUR_MAGICHOUR_API_KEY"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -1264,
+        128
+      ],
+      "id": "3471c1de-27b3-4708-aa37-832a1e1609fc",
+      "name": "GET Node"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "481903ff-7908-4858-864f-3809cf3c7772",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "complete",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1088,
+        128
+      ],
+      "id": "6d7f9de4-0bdb-4fc8-a0a3-3ce78a2a5981",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('GET Node').item.json.downloads[0].url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -864,
+        112
+      ],
+      "id": "bef087ae-8ad5-482b-9e19-ff941338b589",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "name": "={{ $('HTTP Request').item.json.name }}_{{ $now }}.mp4",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1pifOOtkrqrY6nEi6nm3oyYcpTQlN4_AYK57hWFcan77gSKP07Cu9ITXHNfvT4lOQnPq5z_Wy",
+          "mode": "list",
+          "cachedResultName": "Classroom",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1pifOOtkrqrY6nEi6nm3oyYcpTQlN4_AYK57hWFcan77gSKP07Cu9ITXHNfvT4lOQnPq5z_Wy"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -528,
+        224
+      ],
+      "id": "dcd34344-070c-4895-8122-9a092844def6",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1AuLx2LwtjXBnX8s_7bodKGfOT8PV5i9j9nZTCIdoSf0",
+          "mode": "list",
+          "cachedResultName": "Video_Info",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AuLx2LwtjXBnX8s_7bodKGfOT8PV5i9j9nZTCIdoSf0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AuLx2LwtjXBnX8s_7bodKGfOT8PV5i9j9nZTCIdoSf0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "URL": "={{ $json.downloads[0].url }}"
+          },
+          "matchingColumns": [
+            "URL"
+          ],
+          "schema": [
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -544,
+        0
+      ],
+      "id": "15cd85f2-26d0-4b53-981e-eec9bd4cfe4b",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Idea Generation",
+        "formDescription": "Write the idea below for which you want to generate the video.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Idea",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -2400,
+        128
+      ],
+      "id": "f87055b7-3ba4-4a88-8fce-6ce790745624",
+      "name": "On form submission",
+      "webhookId": "3f75798d-096f-4a22-909e-a704acc55fdf"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Write a 10-second video scene for the following idea:\n\n{{ $json.Idea }}\n\nMake it scroll-stopping, visually concrete, and emotionally immediate.",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are a creative video scriptwriter specializing in short-form content. Your job is to write a single punchy scene for a 10-second video.\n\nYour output must follow this exact structure:\n\n**SCENE:**\n[One vivid, specific visual description of what's on screen. Max 2 sentences.]\n\n**VOICEOVER / TEXT ON SCREEN:**\n[The spoken line or text overlay. Must be under 20 words — readable in 10 seconds.]\n\n**MOOD & STYLE:**\n[One line: tone, color palette, and pacing. E.g. \"Dark, high-contrast, fast cuts.\"]\n\n**HOOK:**\n[Why this grabs attention in the first 2 seconds.]\n\nKeep it punchy. No fluff. Every word earns its place."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        -2240,
+        128
+      ],
+      "id": "a2aac564-caed-48a1-91c6-d36ebf2a11eb",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-20b",
+        "options": {
+          "temperature": 0.8
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -2240,
+        304
+      ],
+      "id": "7eda7e0a-c4ce-4590-a62a-d7d197921a83",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Convert the following 10-second video scene into AI video generation prompts:\n\n{{ $json.text }}\n\nOptimize for maximum visual clarity and cinematic impact.",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are an expert prompt engineer specializing in AI video generation tools \nlike Runway, Kling, Pika, and Hailuo.\n\nYour job is to convert a written video scene into optimized generation prompts.\n\nYour output must follow this exact structure:\n\n**VISUAL PROMPT:**\n[A dense, comma-separated description for the video model. Include: subject, action, \nenvironment, lighting, camera angle, camera motion, art style, and mood. \nMax 80 words. No sentences — just descriptive phrases.]\n\n**NEGATIVE PROMPT:**\n[What to avoid. E.g. \"blurry, watermark, text on screen, bad hands, low quality, \nstatic camera, overexposed, cluttered background\"]\n\n**CAMERA MOTION:**\n[One specific instruction. E.g. \"Slow push-in on subject\" / \"Quick pan left to right\" \n/ \"Handheld shaky close-up\"]\n\n**DURATION & PACING:**\n[10 seconds. Describe how the motion should feel — slow burn, fast cuts, single \ncontinuous shot, etc.]\n\n**STYLE REFERENCE:**\n[One cinematic or aesthetic reference. E.g. \"Shot like a Nike commercial\" / \n\"Cyberpunk noir, neon-lit streets\" / \"Raw, documentary handheld feel\"]\n\nBe specific. Vague prompts produce vague videos. Every phrase should push \nthe model toward a precise visual output."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        -1952,
+        128
+      ],
+      "id": "e3cf31bf-db4b-4c37-9397-74935e61f807",
+      "name": "Basic LLM Chain1"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-20b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -1952,
+        304
+      ],
+      "id": "725fcfbb-3473-4906-a434-ff125e0c5cbc",
+      "name": "Groq Chat Model1",
+      "credentials": {
+        "groqApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## NOTES:\nAutomates AI video creation from a text idea and then saves the output to Google Drive and logs it in Google Sheets.\n**STEPS:**\n1.Open the Form Trigger URL and submit your video idea\nLLM Chain 1 writes a 10-second video scene from your idea\n2.LLM Chain 2 converts the scene into an AI video prompt\n3.POST Node sends the prompt to MagicHour and gets a video ID\n4.Wait → GET Node → If Node keeps checking every 10 seconds until the video is ready\n5.Once complete, the video is downloaded, saved to Google Drive, and its URL is pasted in Google Sheets",
+        "height": 304,
+        "width": 640,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2448,
+        -304
+      ],
+      "typeVersion": 1,
+      "id": "192df850-fadb-466f-8102-a1f589f5c8c1",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {
+    "On form submission": [
+      {
+        "json": {
+          "Idea": "Traditional way of using AI",
+          "submittedAt": "2026-06-15T11:34:53.067+05:00",
+          "formMode": "test"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Basic LLM Chain": [
+      {
+        "json": {
+          "text": "**SCENE:**  \nA dim office. A lone worker in a trench coat flips through a battered notebook of handwritten code, then presses a dusty, red “RUN” button on an old, humming computer that spits out a single line of paper.\n\n**VOICEOVER / TEXT ON SCREEN:**  \n\"Traditional AI: manual, slow, and paper‑bound.\"\n\n**MOOD & STYLE:**  \nRetro, low‑key lighting, steady pacing, subtle mechanical whirs.\n\n**HOOK:**  \nThe clunk of the red button and the machine’s whir in sync with a ticking clock grabs the viewer."
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "GET Node",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "POST Node": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET Node": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain1": {
+      "main": [
+        [
+          {
+            "node": "POST Node",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "2efd9cec-0902-4536-81e4-e446054bca33",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "YOUR_N8N_INSTANCE_ID"
+  },
+  "nodeGroups": [],
+  "id": "KyKrIEw4JBlGPczY",
+  "tags": []
+}

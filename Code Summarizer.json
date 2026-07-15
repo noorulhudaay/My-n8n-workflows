@@ -1,0 +1,391 @@
+{
+  "name": "Code Summarizer",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## NOTES\n**Steps:** \n1.Read the code realted mail-> trigger\n2.Summarize the code using LLM\n3.Generate the commennts for the code.\n4. Step 2 and 3 to be done parallel\n5. Merge the outputs of step 2 and 3.\n6. Send the output to me as mail.",
+        "height": 224,
+        "width": 288
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1424,
+        -320
+      ],
+      "typeVersion": 1,
+      "id": "173caaed-65e7-4c49-9463-f80d5a16ae53",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "sender": "noorulhuda4587@gmail.com"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -1168,
+        32
+      ],
+      "id": "31f04e77-6a1c-40a8-8b06-e66fa2e0b091",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Given the code below\ncode:\n{{ $json.text }}\nGenerate comments for the code so i can understand what each line of the code does\nNOTE: Do not modify the existing code lines at all. Just add the comments wherever required.\n",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are a helpful assistant who knows how to write code in python. You can help me understand code by writing comments to it."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        -832,
+        -160
+      ],
+      "id": "5a1dd9c1-0270-4248-80f9-d18fb01b9829",
+      "name": "Comments_Addition"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Given the code below\ncode:\n {{ $json.text }}\nGenerate a summary of what this code does in a very simple language.Do note that the summary should contain all the important details there are in the code so that i know what the code is about in a quick glance",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are an expert in python code. You have the ability to summarize code in simple language and have the knack to cover important details in the summary"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        -848,
+        240
+      ],
+      "id": "2632be5a-2ca8-4d4a-9427-01f5fcf8a25f",
+      "name": "Code_Summary"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -832,
+        16
+      ],
+      "id": "aba8ee17-218b-431d-b4dd-3c662f822a68",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -848,
+        432
+      ],
+      "id": "96712eff-5f81-4337-aad8-fc5e835cc8e0",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -416,
+        64
+      ],
+      "id": "e4dd85c3-1496-4ec9-acb9-27bdbde12adb",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        64
+      ],
+      "id": "a94ae413-0945-4e2d-8da8-5fe4690ce5b7",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "sendTo": "noorulhuda4587@gmail.com",
+        "subject": "Code summary and comments",
+        "message": "={{ $json.text }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        416,
+        64
+      ],
+      "id": "e49ecad4-9bd1-4135-bdfb-14b872d8f1f3",
+      "name": "Send a message",
+      "webhookId": "de2b9446-510a-4b46-9963-b30541432ba8",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1ba6f7a0-9815-4da6-989b-b8302145f5d4",
+              "name": "Message",
+              "value": "=Code with comments:\n{{ $json.text[0] }}\nCode summary:\n{{ $json.text[1] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -64,
+        64
+      ],
+      "id": "ea4c9293-315a-46cd-b447-0cf123719a31",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Convert this message in html format. Include proper code blocks wherever necessary. Code blocks should have syntax highlighting for the specific language used in code\nMessage:\n {{ $json.Message }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You can convert any message into html format that can be sent from one mail to user"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        112,
+        64
+      ],
+      "id": "89a5ab61-2648-41b5-889d-4223b46df6aa",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        112,
+        240
+      ],
+      "id": "8d725f13-8b9a-46ed-9dfa-f3d49e100f27",
+      "name": "OpenRouter Chat Model2",
+      "credentials": {
+        "openRouterApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "OpenRouter account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code_Summary",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Comments_Addition",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Comments_Addition",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Code_Summary",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code_Summary": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Comments_Addition": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "2558f4b3-121d-41b7-83b8-3d186566a8dd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "YOUR_N8N_INSTANCE_ID"
+  },
+  "nodeGroups": [],
+  "id": "vR6FuXsVFpwzbKtz",
+  "tags": []
+}

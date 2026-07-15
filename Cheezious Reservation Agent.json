@@ -1,0 +1,369 @@
+{
+  "name": "Cheezious Reservation Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Check Availability Details\n\nDate: {{ $json.body.date }}\nTime: {{ $json.body.time }}\n",
+        "options": {
+          "systemMessage": "=Get Appointment: Use this tool to check for existing appointments between the requested appointment time and one hour after that time. All appointment times are in Asia/Karachi timezone (UTC+5). Convert times to UTC before calling Google Calendar tools\n\nCurrent date: {{ $now.format('yyyy-MM-dd') }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        208
+      ],
+      "id": "41f5e66d-7fbf-4de8-ab29-b85aac64af74",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        192,
+        400
+      ],
+      "id": "0160f62d-a6ea-4d72-9b5a-454e0ba022eb",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "842d963db3e0a95b5d468b71424a31ac7763ca8f34f9b0ca818b8ff4b9945e71@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Cheezious Reservations"
+        },
+        "limit": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Limit', ``, 'number') }}",
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('After', ``, 'string') }}",
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Before', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        352,
+        400
+      ],
+      "id": "b70b5807-77ba-4cae-9e74-b7cac914f796",
+      "name": "Get Appointment",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        512,
+        208
+      ],
+      "id": "c9f0d9cf-33bb-4b6b-beb1-5dde55bdbcb4",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "check_reservation",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        16,
+        208
+      ],
+      "id": "46e21822-8eed-4797-bcea-a14f4de26aa8",
+      "name": "Check Reservation",
+      "webhookId": "1a4090cd-b7ed-414e-ad97-ca3f0bbfac22"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "book_reservation",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        784,
+        224
+      ],
+      "id": "eccb73e2-fd95-4630-a536-8bc1aa09e86d",
+      "name": "Book Reservation",
+      "webhookId": "c4b86c99-173b-4f57-be3a-3c9a0207f951"
+    },
+    {
+      "parameters": {
+        "content": "## Reservation Checking\n",
+        "height": 400,
+        "width": 800,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -48,
+        128
+      ],
+      "typeVersion": 1,
+      "id": "702ebd82-4efb-481a-9d99-5fe27cca105a",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Booking Reservation Details:\n\nName: {{ $json.body.name }}\nDate: {{ $json.body.date }}\nTime (PKT): {{ $json.body.time }}\nTime (UTC): Time (UTC): {{ DateTime.fromISO($json.body.date + 'T' + $json.body.time, { zone: 'Asia/Karachi' }).toUTC().toISO() }}\nNumber of People: {{ $json.body.number_of_people }}\n\nBook this reservation using the UTC time provided above.",
+        "options": {
+          "systemMessage": "=You are a booking agent for Cheezious restaurant. \nUse the Create Appointment tool to book 1 hour reservations.\nUTC time is already provided in the prompt. Use it directly.\nKeep responses short and concise."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        976,
+        224
+      ],
+      "id": "696c0138-d1c6-4c99-b28b-07fdf4f92532",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        976,
+        400
+      ],
+      "id": "ce8041d2-1dae-4daf-a23c-f5af1ea1d9a3",
+      "name": "Groq Chat Model1",
+      "credentials": {
+        "groqApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1296,
+        224
+      ],
+      "id": "848509a7-d599-4816-b7b4-903317da38e8",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "842d963db3e0a95b5d468b71424a31ac7763ca8f34f9b0ca818b8ff4b9945e71@group.calendar.google.com",
+          "mode": "list"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "useDefaultReminders": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Use_Default_Reminders', ``, 'boolean') }}",
+        "additionalFields": {
+          "description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Description', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        1152,
+        400
+      ],
+      "id": "9ecc35b8-dc8b-48ea-899b-284b5bd79546",
+      "name": "Book Appointment",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Reservation Booking\n",
+        "height": 400,
+        "width": 800,
+        "color": "#6443B1"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        752,
+        128
+      ],
+      "typeVersion": 1,
+      "id": "d8ad223b-517a-407f-ae44-6bc4496f2713",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## NOTES:\n**Reservation Checking**\n\nChecks if a time slot is already booked by querying Google Calendar.\n**Steps:**\n1. POST request check reservation with date & time\n2. AI Agent calls Get Appointment tool\n3. Google Calendar returns events in that 1-hour window\n4. Webhook responds with availability result\n",
+        "height": 256,
+        "width": 480,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -32,
+        -208
+      ],
+      "typeVersion": 1,
+      "id": "2ccf58e2-2fc7-42af-ad30-bd036f0a8681",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## NOTES:\n**Reservation Booking**\n\nCreates a new 1-hour reservation event in Google Calendar.\n**Steps:**\n1. POST request book reservation with name, date, time and people\n2. Prompt node converts PKT → UTC using n8n expression\n3. AI Agent calls Book Appointment tool\n4. Event is created in Google Calendar\n5. Webhook responds with booking confirmation\n",
+        "height": 256,
+        "width": 486,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        784,
+        -208
+      ],
+      "typeVersion": 1,
+      "id": "de573436-d7e7-40b2-ade8-33ac38352cb3",
+      "name": "Sticky Note3"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Appointment": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Reservation": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Book Reservation": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Book Appointment": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "03a9e42c-71cb-4f99-a98d-2bc3e1428ca4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "YOUR_N8N_INSTANCE_ID"
+  },
+  "nodeGroups": [],
+  "id": "BxY82WeAbQLq7Pn7",
+  "tags": []
+}
